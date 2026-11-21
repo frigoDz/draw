@@ -1,4 +1,8 @@
+use raster::Color;
+
+use crate::geometrical_shapes::line::draw_segment;
 use crate::geometrical_shapes::point::Point;
+use crate::geometrical_shapes::{Displayable, Drawable};
 
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct Rectangle {
@@ -17,6 +21,25 @@ impl Rectangle {
             p1: Point::new(left, top),
             p2: Point::new(right, bottom),
         }
+    }
+}
+
+impl Drawable for Rectangle {
+    fn color(&self) -> Color {
+        Color::rgb(0, 150, 255)
+    }
+
+    fn draw(&self, target: &mut dyn Displayable) {
+        let color = self.color();
+        let top_left = Point::new(self.p1.x, self.p1.y);
+        let top_right = Point::new(self.p2.x, self.p1.y);
+        let bottom_right = Point::new(self.p2.x, self.p2.y);
+        let bottom_left = Point::new(self.p1.x, self.p2.y);
+
+        draw_segment(target, &top_left, &top_right, color.clone());
+        draw_segment(target, &top_right, &bottom_right, color.clone());
+        draw_segment(target, &bottom_right, &bottom_left, color.clone());
+        draw_segment(target, &bottom_left, &top_left, color);
     }
 }
 
