@@ -25,15 +25,12 @@ impl Point {
 
 impl Drawable for Point {
     fn color(&self) -> Color {
-        Color::rgb(0, 255, 0) // green
+        let mut rng = rand::thread_rng();
+        Color::rgb(rng.gen_range(80..=255), rng.gen_range(80..=255), rng.gen_range(80..=255))
     }
 
     fn draw(&self, image: &mut dyn Displayable) {
-        for dx in -1..=1 {
-            for dy in -1..=1 {
-                image.display(self.x + dx, self.y + dy, self.color());
-            }
-        }
+        image.display(self.x, self.y, self.color());
     }
 }
 

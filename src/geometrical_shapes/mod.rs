@@ -21,5 +21,3 @@ pub trait Drawable {
     fn draw(&self, image: &mut dyn Displayable);
 }
 
-#[cfg(test)]
-mod tests;

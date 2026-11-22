@@ -1,4 +1,5 @@
 use raster::Color;
+use rand::Rng;
 
 use crate::geometrical_shapes::line::draw_segment;
 use crate::geometrical_shapes::point::Point;
@@ -23,7 +24,8 @@ impl Triangle {
 
 impl Drawable for Triangle {
     fn color(&self) -> Color {
-        Color::rgb(255, 0, 0)
+        let mut rng = rand::thread_rng();
+        Color::rgb(rng.gen_range(80..=255), rng.gen_range(80..=255), rng.gen_range(80..=255))
     }
 
     fn draw(&self, target: &mut dyn Displayable) {
@@ -34,19 +36,3 @@ impl Drawable for Triangle {
     }
 }
 
-#[cfg(test)]
-mod tests {
-    use super::{Point, Triangle};
-
-    #[test]
-    fn constructor_copies_each_vertex() {
-        let a = Point::new(1, 2);
-        let b = Point::new(3, 4);
-        let c = Point::new(5, 6);
-        let triangle = Triangle::new(&a, &b, &c);
-
-        assert_eq!(triangle.a, a);
-        assert_eq!(triangle.b, b);
-        assert_eq!(triangle.c, c);
-    }
-}

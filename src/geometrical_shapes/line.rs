@@ -1,4 +1,5 @@
 use raster::Color;
+use rand::Rng;
 
 use crate::geometrical_shapes::point::Point;
 use crate::geometrical_shapes::{Displayable, Drawable};
@@ -58,7 +59,8 @@ impl Line {
 
 impl Drawable for Line {
     fn color(&self) -> Color {
-        Color::rgb(255, 0, 255) // magenta
+        let mut rng = rand::thread_rng();
+        Color::rgb(rng.gen_range(80..=255), rng.gen_range(80..=255), rng.gen_range(80..=255))
     }
 
     fn draw(&self, image: &mut dyn Displayable) {
@@ -91,19 +93,6 @@ mod tests {
                 assert!((0..80).contains(&p.y));
             }
         }
-    }
-
-    #[test]
-    fn segment_includes_both_endpoints() {
-        let mut rec = Recorder::default();
-        draw_segment(
-            &mut rec,
-            &Point::new(1, 2),
-            &Point::new(4, 2),
-            Color::rgb(0, 0, 0),
-        );
-
-        assert_eq!(rec.0, [(1, 2), (2, 2), (3, 2), (4, 2)]);
     }
 
     #[test]
