@@ -29,7 +29,11 @@ impl Drawable for Point {
     }
 
     fn draw(&self, image: &mut dyn Displayable) {
-        image.display(self.x, self.y, self.color());
+        for dx in -1..=1 {
+            for dy in -1..=1 {
+                image.display(self.x + dx, self.y + dy, self.color());
+            }
+        }
     }
 }
 

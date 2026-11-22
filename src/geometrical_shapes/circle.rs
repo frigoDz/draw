@@ -20,15 +20,8 @@ impl Circle {
     }
 
     pub fn random(width: i32, height: i32) -> Self {
-        let width = width.max(1);
-        let height = height.max(1);
         let center = Point::random(width, height);
-        let max_radius = center
-            .x
-            .min(width - 1 - center.x)
-            .min(center.y.min(height - 1 - center.y))
-            .min(20);
-        let radius = rand::thread_rng().gen_range(0..=max_radius);
+        let radius = rand::thread_rng().gen_range(1..=width.min(height).max(2) / 2);
 
         Self { center, radius }
     }
@@ -36,10 +29,12 @@ impl Circle {
 
 impl Drawable for Circle {
     fn color(&self) -> Color {
-        Color::rgb(255, 165, 0)
+        let mut rng = rand::thread_rng();
+        Color::rgb(rng.gen_range(80..=255), rng.gen_range(80..=255), rng.gen_range(80..=255))
     }
 
     fn draw(&self, target: &mut dyn Displayable) {
+        let color = self.color();
         let center_x = i64::from(self.center.x);
         let center_y = i64::from(self.center.y);
         let mut x = i64::from(self.radius);
@@ -61,7 +56,7 @@ impl Drawable for Circle {
             for (point_x, point_y) in points {
                 if let (Ok(point_x), Ok(point_y)) = (i32::try_from(point_x), i32::try_from(point_y))
                 {
-                    target.display(point_x, point_y, self.color());
+                    target.display(point_x, point_y, color.clone());
                 }
             }
 
@@ -78,25 +73,16 @@ impl Drawable for Circle {
 
 #[cfg(test)]
 mod tests {
-    use super::{Circle, Point};
+    use super::Circle;
 
     #[test]
-    fn random_circle_stays_inside_positive_bounds() {
+    fn random_circle_center_stays_inside_bounds() {
         for _ in 0..100 {
             let circle = Circle::random(100, 80);
 
-            assert!(circle.center.x - circle.radius >= 0);
-            assert!(circle.center.y - circle.radius >= 0);
-            assert!(circle.center.x + circle.radius < 100);
-            assert!(circle.center.y + circle.radius < 80);
+            assert!((0..100).contains(&circle.center.x));
+            assert!((0..80).contains(&circle.center.y));
+            assert!(circle.radius >= 1);
         }
-    }
-
-    #[test]
-    fn random_circle_fits_single_pixel_image() {
-        let circle = Circle::random(1, 1);
-
-        assert_eq!(circle.center, Point::new(0, 0));
-        assert_eq!(circle.radius, 0);
     }
 }
