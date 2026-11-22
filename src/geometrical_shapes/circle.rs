@@ -34,3 +34,45 @@ impl Circle {
     }
 }
 
+impl Drawable for Circle {
+    fn color(&self) -> Color {
+        Color::rgb(255, 165, 0)
+    }
+
+    fn draw(&self, target: &mut dyn Displayable) {
+        let center_x = i64::from(self.center.x);
+        let center_y = i64::from(self.center.y);
+        let mut x = i64::from(self.radius);
+        let mut y = 0;
+        let mut decision = 1 - x;
+
+        while x >= y {
+            let points = [
+                (center_x + x, center_y + y),
+                (center_x + y, center_y + x),
+                (center_x - y, center_y + x),
+                (center_x - x, center_y + y),
+                (center_x - x, center_y - y),
+                (center_x - y, center_y - x),
+                (center_x + y, center_y - x),
+                (center_x + x, center_y - y),
+            ];
+
+            for (point_x, point_y) in points {
+                if let (Ok(point_x), Ok(point_y)) = (i32::try_from(point_x), i32::try_from(point_y))
+                {
+                    target.display(point_x, point_y, self.color());
+                }
+            }
+
+            y += 1;
+            if decision <= 0 {
+                decision += 2 * y + 1;
+            } else {
+                x -= 1;
+                decision += 2 * (y - x) + 1;
+            }
+        }
+    }
+}
+
