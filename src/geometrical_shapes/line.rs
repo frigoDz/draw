@@ -106,4 +106,12 @@ mod tests {
         assert_eq!(rec.0, [(1, 2), (2, 2), (3, 2), (4, 2)]);
     }
 
+    #[test]
+    fn line_with_same_start_and_end_draws_one_pixel() {
+        let p = Point::new(3, 5);
+        let mut rec = Recorder::default();
+        draw_segment(&mut rec, &p, &p, Color::rgb(0, 0, 0));
+
+        assert_eq!(rec.0, [(3, 5)]);
+    }
 }
