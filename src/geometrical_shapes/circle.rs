@@ -76,3 +76,27 @@ impl Drawable for Circle {
     }
 }
 
+#[cfg(test)]
+mod tests {
+    use super::{Circle, Point};
+
+    #[test]
+    fn random_circle_stays_inside_positive_bounds() {
+        for _ in 0..100 {
+            let circle = Circle::random(100, 80);
+
+            assert!(circle.center.x - circle.radius >= 0);
+            assert!(circle.center.y - circle.radius >= 0);
+            assert!(circle.center.x + circle.radius < 100);
+            assert!(circle.center.y + circle.radius < 80);
+        }
+    }
+
+    #[test]
+    fn random_circle_fits_single_pixel_image() {
+        let circle = Circle::random(1, 1);
+
+        assert_eq!(circle.center, Point::new(0, 0));
+        assert_eq!(circle.radius, 0);
+    }
+}

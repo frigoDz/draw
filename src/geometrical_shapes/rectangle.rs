@@ -43,3 +43,38 @@ impl Drawable for Rectangle {
     }
 }
 
+#[cfg(test)]
+mod tests {
+    use super::{Point, Rectangle};
+    use crate::geometrical_shapes::{Displayable, Drawable};
+    use raster::Color;
+
+    #[derive(Default)]
+    struct RecordingDisplay(Vec<(i32, i32)>);
+
+    impl Displayable for RecordingDisplay {
+        fn display(&mut self, x: i32, y: i32, _color: Color) {
+            self.0.push((x, y));
+        }
+    }
+
+    #[test]
+    fn constructor_normalizes_reversed_corners() {
+        let rectangle = Rectangle::new(&Point::new(150, 300), &Point::new(50, 60));
+
+        assert_eq!(rectangle.p1, Point::new(50, 60));
+        assert_eq!(rectangle.p2, Point::new(150, 300));
+    }
+
+    #[test]
+    fn draw_traces_all_four_edges() {
+        let rectangle = Rectangle::new(&Point::new(1, 1), &Point::new(4, 3));
+        let mut target = RecordingDisplay::default();
+
+        rectangle.draw(&mut target);
+
+        for corner in [(1, 1), (4, 1), (4, 3), (1, 3)] {
+            assert!(target.0.contains(&corner));
+        }
+    }
+}
